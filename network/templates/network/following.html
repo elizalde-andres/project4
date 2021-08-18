@@ -1,0 +1,48 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div id=message-view>
+    </div>
+
+    <div id=profile-view>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 id="name">
+                                {{ user.name }}
+                            </h3>
+                            <h4 id="username">
+                                @{{ user.username }}
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 id="title">
+                                Following
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="posts-view">
+        {% include "network/posts.html" with posts=user.following_posts %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    {{ request.user.id|json_script:"user_id" }}
+    <script src="{% static 'network/profile.js' %}"></script>
+{% endblock %}

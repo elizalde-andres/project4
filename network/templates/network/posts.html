@@ -1,0 +1,73 @@
+{% load static %}
+<div class="container-fluid">
+	{% for post in posts %}
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12" id="user-info">
+                        { post.author.name } @{ post.author.username }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="post-content">
+                        { post.content }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right" id="timestamp">
+                        { post.timestamp }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6" id="likes">
+                        { post.likes_count } Like Button <i class="far fa-heart"></i><i class="fas fa-heart"></i>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-outline-secondary btn-md" id="edit-post">
+                            Edit<i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+    {% endfor %}
+
+	<div class="row">
+		<div class="col-md-12">
+			<nav>
+				<ul class="pagination">
+					<li class="page-item">
+						<a class="page-link" href="#">Previous</a>
+					</li>
+					<li class="page-item">
+						<a class="page-link" href="#">1</a>
+					</li>
+					<li class="page-item">
+						<a class="page-link" href="#">2</a>
+					</li>
+					<li class="page-item">
+						<a class="page-link" href="#">3</a>
+					</li>
+					<li class="page-item">
+						<a class="page-link" href="#">4</a>
+					</li>
+					<li class="page-item">
+						<a class="page-link" href="#">5</a>
+					</li>
+					<li class="page-item">
+						<a class="page-link" href="#">Next</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+
+{% block script %}
+    {{ request.user.id|json_script:"user_id" }}
+    <script src="{% static 'network/post.js' %}"></script>
+{% endblock %}
