@@ -1,5 +1,21 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
-    TODO
+    <div id=message-view>
+    </div>
+
+    <div id="profile-view">
+        
+    </div>
+
+    <div id="posts-view">
+    </div>
+{% endblock %}
+
+{% block script %}
+    {{ request.user.id|json_script:"user_id" }}
+    <script src="{% static 'network/network.js' %}">
+       
+    </script>
 {% endblock %}
