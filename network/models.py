@@ -27,11 +27,6 @@ class User(AbstractUser):
     @property
     def following_count(self):
         return self.following.all().count()
-
-    @property
-    def following_posts(self):
-        return Post.objects.filter(author__in=self.following.all()).order_by("-timestamp")
-
     
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")

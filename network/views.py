@@ -1,10 +1,12 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import Post, User
 
 
 def index(request):
@@ -64,13 +66,74 @@ def register(request):
         return render(request, "network/register.html")
 
 def posts(request, set):
-    pass
+    # Filter posts (all or following)
+    if set == "all":
+        posts = Post.objects.all()
+    elif set == "following":
+        posts = Post.objects.filter(author__in=request.user.following.all())
+    else:
+        return JsonResponse({"error": "Invalid set."}, status=400)
+
+    # Return posts in reverse chronologial order
+    posts = posts.order_by("-timestamp").all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
 
 def user_posts(request, user_id):
-    pass
+    try: 
+        posts = User.objects.get(pk=user_id).posts.all().order_by("-timestamp")
+        return JsonResponse([post.serialize() for post in posts], safe=False)
+    except:
+        return JsonResponse({"error": "Invalid user id."}, status=400)
 
-def profile(request,profile_id):
-    pass
+def profile(request,profile_id): 
+    try:
+        profile_user = User.objects.get(pk=profile_id)
+    except:
+        return JsonResponse({"error": "Ivalid profile id."}, status=400)
+    
+    if request.method == "GET":
+        return JsonResponse(profile_user.serialize(), safe=False)
+
+    elif request.method == "PUT":
+        current_user = request.user
+        if current_user.is_authenticated:
+            data = json.loads(request.body)
+            if data.get("follow") is not None:
+                if data.get("follow") == True:
+                    profile_user.followers.add(current_user)
+                else:
+                    profile_user.followers.remove(current_user)
+            profile_user.save()
+            return HttpResponse(status=204)
+        else:
+            return HttpResponse(status=403)
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
 
 def post(request, id):
-    pass
+    try:
+        post = Post.objects.get(pk=id)
+    except:
+        return JsonResponse({"error": "Ivalid post id."}, status=400)
+
+    if request.method == "PUT":
+        current_user = request.user
+        if current_user.is_authenticated:
+            data = json.loads(request.body)
+            if data.get("like") is not None:
+                if data.get("like") == True:
+                    post.likes.add(current_user)
+                else:
+                    post.likes.remove(current_user)
+            if data.get("content") is not None:
+                post.content = data["content"]
+            post.save()
+            return HttpResponse(status=204)
+        else:
+            return HttpResponse(status=403)
+    else:
+        return JsonResponse({
+            "error": "Only PUT request required."
+        }, status=400)
