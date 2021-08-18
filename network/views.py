@@ -40,6 +40,7 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
+        name = request.POST["name"]
 
         # Ensure password matches confirmation
         password = request.POST["password"]
@@ -51,7 +52,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = User.objects.create_user(username, email, password, name=name)
             user.save()
         except IntegrityError:
             return render(request, "network/register.html", {
@@ -61,3 +62,15 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def posts(request, set):
+    pass
+
+def user_posts(request, user_id):
+    pass
+
+def profile(request,profile_id):
+    pass
+
+def post(request, id):
+    pass
