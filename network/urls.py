@@ -8,6 +8,7 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
+    path("newpost", views.new_post, name="new_post"),
 
     # API paths
     path("posts/<str:set>", views.posts, name="posts"),

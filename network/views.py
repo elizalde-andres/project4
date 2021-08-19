@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
@@ -137,3 +138,24 @@ def post(request, id):
         return JsonResponse({
             "error": "Only PUT request required."
         }, status=400)
+
+@login_required()
+def new_post(request):
+    user = request.user
+    print(request.POST["content"])
+    if request.method == 'POST':
+        if user.is_authenticated:
+            post = Post(author=user, content=request.POST["content"])
+            try:
+                post.save()
+                return HttpResponseRedirect(reverse("index"))
+            except:
+                # TODO: si hay error al guardar el post, volver a rellenar el formulario con el contenido, tal vez en vez de return render, haya que volver al js para llenar el textarea
+                return render(request, "network/index.html", {
+                    "message" : "Error saving the post.",
+                    "content" : request.POST["content"] 
+                })
+        else:
+            return render(request, "network/login.html")
+    else:
+        return render(request, "network/index.html")
