@@ -7,26 +7,26 @@
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-12" id="user-info">
-                        { post.author.name } { post.author.username }
+                        <strong>{{ post.author_name }}</strong> <span class="text-muted">{{ post.author_username }}</span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12" id="post-content">
-                        { post.content }
+                        {{ post.content }}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right" id="timestamp">
-                        { post.timestamp }
+                        {{ post.timestamp }}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6" id="likes">
-                        { post.likes_count } Like Button <i class="far fa-heart"></i><i class="fas fa-heart"></i>
+                        {{ post.likes_count }} <i class="fa fa-heart"></i><i class="fa fa-heart-o"></i>
                     </div>
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-outline-secondary btn-md" id="edit-post">
-                            Edit<i class="fa-solid fa-pen-to-square"></i>
+                            <i class="fa fa-edit"></i>
                         </button>
                     </div>
                 </div>

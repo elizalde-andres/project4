@@ -35,11 +35,10 @@
     {% endif %}
 
     <div id="posts-view">
-        {% include "network/posts.html" with posts=posts %}
     </div>
 {% endblock %}
 
 {% block script %}
     {{ request.user.id|json_script:"user_id" }}
-    <script src="{% static 'network/addpost.js' %}"></script>
+    <script src="{% static 'network/network.js' %}"></script>
 {% endblock %}

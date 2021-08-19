@@ -77,6 +77,11 @@ def posts(request, set):
 
     # Return posts in reverse chronologial order
     posts = posts.order_by("-timestamp").all()
+    posts = [post.serialize() for post in posts]
+    
+    return render(request, "network/posts.html", {
+        "posts": posts
+    })
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
 def user_posts(request, user_id):
