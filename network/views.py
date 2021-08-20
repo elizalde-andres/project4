@@ -14,15 +14,17 @@ from .models import Post, User
 
 def index(request):
     page = request.GET.get('page')
-    print("**************")
-    print(page)
+
     return render(request, "network/index.html", {
         "page_number": page
     })
 
 def following(request):
-    return render(request, "network/following.html")
+    page = request.GET.get('page')
 
+    return render(request, "network/following.html", {
+        "page_number": page
+    })
 def login_view(request):
     if request.method == "POST":
 
@@ -182,10 +184,7 @@ def display_posts(request, set):
     paginator = Paginator(posts_set,1)
     page_number = request.GET.get('page')
 
-    print(page_number)
-
     page_posts = paginator.get_page(page_number)
-    print(f"For page: {page_number} page_posts is: {page_posts}")
 
     return render(request, "network/posts.html", {
         "posts": page_posts
@@ -198,9 +197,16 @@ def user(request, profile_id):
 
     posts = User.objects.get(pk=profile_id).posts.all()
     posts = [post.serialize() for post in posts]
+
+    paginator = Paginator(posts,1)
+    page_number = request.GET.get('page')
+
+    page_posts = paginator.get_page(page_number)
+
+
     return render(request, "network/profile.html", {
         "profile_info": profile_info,
-        "posts": posts
+        "posts": page_posts
     })
 
 def is_following(request):
