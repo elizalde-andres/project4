@@ -3,32 +3,28 @@
 
 {% block body %}
     <div id=message-view>
+        {% if message %}
+            <div class="alert alert-info justify-content-center" role="alert">
+                {{ message }}
+             </div>
+        {% endif %}
     </div>
 
-    <div id=profile-view>
+    {% if user.is_authenticated %}
+    <div id=addpost-view>
 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                 </div>
                 <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h3 id="name">
-                                {{ user.name }}
-                            </h3>
-                            <h4 id="username">
-                                {{ user.username }}
-                            </h4>
+                    <form role="form" action="{% url 'new_post' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                                <textarea class="form-control" name="content" placeholder="Say your thing" rows="3">{% if content %}{{ content }}{% endif %}</textarea>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h1 id="title">
-                                Following
-                            </h1>
-                        </div>
-                    </div>
+                        <input class="btn btn-primary float-right" type="submit" value="Post!">
+                    </form>
                 </div>
                 <div class="col-md-3">
                 </div>
@@ -36,9 +32,12 @@
         </div>
 
     </div>
+    {% endif %}
 
     <div id="posts-view">
-        {% include "network/posts.html" with posts=user.following_posts %}
     </div>
 {% endblock %}
 
+{% block script %}
+    <script src="{% static 'network/following.js' %}"></script>
+{% endblock %}

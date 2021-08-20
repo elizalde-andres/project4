@@ -1,6 +1,8 @@
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core import paginator
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
@@ -11,8 +13,15 @@ from .models import Post, User
 
 
 def index(request):
-    return render(request, "network/index.html")
+    page = request.GET.get('page')
+    print("**************")
+    print(page)
+    return render(request, "network/index.html", {
+        "page_number": page
+    })
 
+def following(request):
+    return render(request, "network/following.html")
 
 def login_view(request):
     if request.method == "POST":
@@ -165,11 +174,21 @@ def new_post(request):
         return render(request, "network/index.html")
 
 #TODO:handle errors ver qué devuelven posts() profile()
+
 def display_posts(request, set):
     posts_set = posts(request, set)
     posts_set = json.loads(posts_set.content)
+
+    paginator = Paginator(posts_set,1)
+    page_number = request.GET.get('page')
+
+    print(page_number)
+
+    page_posts = paginator.get_page(page_number)
+    print(f"For page: {page_number} page_posts is: {page_posts}")
+
     return render(request, "network/posts.html", {
-        "posts": posts_set
+        "posts": page_posts
     })
 
 
