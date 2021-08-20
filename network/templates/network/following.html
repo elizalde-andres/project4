@@ -42,7 +42,3 @@
     </div>
 {% endblock %}
 
-{% block script %}
-    {{ request.user.id|json_script:"user_id" }}
-    <script src="{% static 'network/profile.js' %}"></script>
-{% endblock %}

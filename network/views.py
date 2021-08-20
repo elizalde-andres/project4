@@ -77,13 +77,10 @@ def posts(request, set):
 
     # Return posts in reverse chronologial order
     posts = posts.order_by("-timestamp").all()
-    posts = [post.serialize() for post in posts]
-    
-    return render(request, "network/posts.html", {
-        "posts": posts
-    })
+
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
+# API methods
 def user_posts(request, user_id):
     try: 
         posts = User.objects.get(pk=user_id).posts.all().order_by("-timestamp")
@@ -98,6 +95,7 @@ def profile(request,profile_id):
         return JsonResponse({"error": "Ivalid profile id."}, status=400)
     
     if request.method == "GET":
+        print(profile_user.serialize())
         return JsonResponse(profile_user.serialize(), safe=False)
 
     elif request.method == "PUT":
@@ -144,10 +142,11 @@ def post(request, id):
             "error": "Only PUT request required."
         }, status=400)
 
+
+
 @login_required()
 def new_post(request):
     user = request.user
-    print(request.POST["content"])
     if request.method == 'POST':
         if user.is_authenticated:
             post = Post(author=user, content=request.POST["content"])
@@ -164,3 +163,35 @@ def new_post(request):
             return render(request, "network/login.html")
     else:
         return render(request, "network/index.html")
+
+#TODO:handle errors ver qué devuelven posts() profile()
+def display_posts(request, set):
+    posts_set = posts(request, set)
+    posts_set = json.loads(posts_set.content)
+    return render(request, "network/posts.html", {
+        "posts": posts_set
+    })
+
+
+def user(request, profile_id):
+    profile_info = profile(request, profile_id)
+    profile_info = json.loads(profile_info.content)
+
+    posts = User.objects.get(pk=profile_id).posts.all()
+    posts = [post.serialize() for post in posts]
+    return render(request, "network/profile.html", {
+        "profile_info": profile_info,
+        "posts": posts
+    })
+
+def is_following(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user1_id = int(data.get("user1"))
+        user2_id = int(data.get("user2"))
+
+        user1 = User.objects.get(pk=user1_id)
+        user2 = User.objects.get(pk=user2_id)
+        
+        is_following = user2 in user1.following.all()        
+        return JsonResponse({"is_following": is_following}, safe=False)

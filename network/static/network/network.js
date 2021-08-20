@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function load_posts(set) {
-    fetch(`/posts/${set}`) // or whatever url you assign to that view
+    fetch(`/display_posts/${set}`)
     .then(response => response.text())
     .then(data => document.querySelector("#posts-view").innerHTML=data);
 }

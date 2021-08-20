@@ -14,28 +14,30 @@
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-md-12 text-right">
-                            <button type="button" class="btn btn-info" id="follow-btn">
-                                (Un)Follow
-                            </button>
+                            {% if user.is_authenticated and user.id != profile_info.id  %}
+                                <button type="button" class="btn btn-info" id="follow-btn">
+                                    (Un)Follow
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <h3 id="name">
-                                {{ user.name }}
+                                {{ profile_info.name }}
                             </h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <h5 class="text-muted" id="username">
-                                {{ user.username }}
+                                {{ profile_info.username }}
                             </h5>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12" id="follows">
-                            Following: {{ user.following_count }} - Followers: {{ user.followers_count }}
+                            Following: {{ profile_info.following }} - Followers: {{ profile_info.followers }}
                         </div>
                     </div>
                 </div>
@@ -47,11 +49,12 @@
     </div>
 
     <div id="posts-view">
-        {% include "network/posts.html" with posts=user.posts %}
+        {% include "network/posts.html" with posts=posts %}
     </div>
 {% endblock %}
 
+
 {% block script %}
-    {{ request.user.id|json_script:"user_id" }}
+    {{ profile_info.id|json_script:"profile_id" }}
     <script src="{% static 'network/profile.js' %}"></script>
 {% endblock %}
