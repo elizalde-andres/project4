@@ -23,9 +23,9 @@
                     <div class="col-md-12 edit-form" id="edit-form-{{ post.id }}">
                         <form>
                             <div class="form-group">
-                                <textarea class="form-control" name="content" id="content-{{ post.id }}"></textarea>
+                                <textarea class="form-control" name="content" id="content-{{ post.id }}" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
                             </div>
-                            <button class="btn btn-primary" type="button" id="save-{{ post.id }}" value="{{ post.id }}">Save</button>
+                            <button class="btn btn-primary float-right" type="button" id="save-{{ post.id }}" value="{{ post.id }}">Save</button>
                         </form>
                     </div>
                     {% endif %}    
