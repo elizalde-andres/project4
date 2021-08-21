@@ -12,14 +12,43 @@ from django.urls import reverse
 from .models import Post, User
 
 
+# def index(request):
+#     page = request.GET.get('page')
+
+#     return render(request, "network/index.html", {
+#         "page_number": page
+#     })
+
 def index(request):
-    page = request.GET.get('page')
+
+    posts = Post.objects.all().order_by("-timestamp")
+    posts = [post.serialize() for post in posts]
+
+    paginator = Paginator(posts,2)
+    page_number = request.GET.get('page')
+
+    page_posts = paginator.get_page(page_number)
+
 
     return render(request, "network/index.html", {
-        "page_number": page
+        "posts": page_posts
     })
 
+
 def following(request):
+    following = User.objects.get(pk=request.user.id).following.all()
+    posts = Post.objects.filter(author__in=following).order_by("-timestamp")
+    posts = [post.serialize() for post in posts]
+
+    paginator = Paginator(posts,2)
+    page_number = request.GET.get('page')
+
+    page_posts = paginator.get_page(page_number)
+
+
+    return render(request, "network/following.html", {
+        "posts": page_posts
+    })
     page = request.GET.get('page')
 
     return render(request, "network/following.html", {
@@ -106,7 +135,6 @@ def profile(request,profile_id):
         return JsonResponse({"error": "Ivalid profile id."}, status=400)
     
     if request.method == "GET":
-        print(profile_user.serialize())
         return JsonResponse(profile_user.serialize(), safe=False)
 
     elif request.method == "PUT":
@@ -148,9 +176,11 @@ def post(request, id):
             return HttpResponse(status=204)
         else:
             return HttpResponse(status=403)
+    elif request.method == "GET":
+        return JsonResponse(post.serialize(), safe=False)
     else:
         return JsonResponse({
-            "error": "Only PUT request required."
+            "error": "PUT or GET request required."
         }, status=400)
 
 
@@ -181,7 +211,7 @@ def display_posts(request, set):
     posts_set = posts(request, set)
     posts_set = json.loads(posts_set.content)
 
-    paginator = Paginator(posts_set,1)
+    paginator = Paginator(posts_set,2)
     page_number = request.GET.get('page')
 
     page_posts = paginator.get_page(page_number)
@@ -198,7 +228,7 @@ def user(request, profile_id):
     posts = User.objects.get(pk=profile_id).posts.all()
     posts = [post.serialize() for post in posts]
 
-    paginator = Paginator(posts,1)
+    paginator = Paginator(posts,2)
     page_number = request.GET.get('page')
 
     page_posts = paginator.get_page(page_number)
@@ -220,3 +250,15 @@ def is_following(request):
         
         is_following = user2 in user1.following.all()        
         return JsonResponse({"is_following": is_following}, safe=False)
+
+def likes(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_id = request.user.id
+
+        post_id = int(data.get("post_id"))
+
+        user = User.objects.get(pk=user_id)
+        post = Post.objects.get(pk=post_id)
+        likes = user in post.likes.all()
+        return JsonResponse({"likes": likes}, safe=False)

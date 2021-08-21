@@ -1,33 +1,55 @@
 {% load static %}
+{% block script %}
+    {{ request.user.id|json_script:"user_id" }}
+    <script src="{% static 'network/post.js' %}"></script>
+{% endblock %}
+
 <div class="container-fluid">
 	{% for post in posts %}
         <div class="row">
             <div class="col-md-3">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 post">
                 <div class="row">
                     <div class="col-md-12" id="user-info">
-                        <strong>{{ post.author_name }}</strong> <a href="{% url 'user' profile_id=post.author_id %}" class="text-muted">@{{ post.author_name }}</a>
+                        <strong>{{ post.author_name }}</strong> <a href="{% url 'user' profile_id=post.author_id %}" class="text-muted">{{ post.author_username }}</a>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12" id="post-content">
-                        {{ post.content }}
+                    <div class="col-md-12" id="post-content-{{ post.id }}">
+                        {{ post.content|linebreaksbr }}
                     </div>
+                    {% if user.is_authenticated and user.id == post.author_id %}
+                    <div class="col-md-12 edit-form" id="edit-form-{{ post.id }}">
+                        <form>
+                            <div class="form-group">
+                                <textarea class="form-control" name="content" id="content-{{ post.id }}"></textarea>
+                            </div>
+                            <button class="btn btn-primary" type="button" id="save-{{ post.id }}" value="{{ post.id }}">Save</button>
+                        </form>
+                    </div>
+                    {% endif %}    
                 </div>
                 <div class="row">
-                    <div class="col-md-12 text-right" id="timestamp">
+                    <div class="col-md-12 text-right text-muted small" id="timestamp">
                         {{ post.timestamp }}
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6" id="likes">
-                        {{ post.likes_count }} <i class="fa fa-heart"></i><i class="fa fa-heart-o"></i>
+                    <div class="col-md-6" id="likes-{{ post.id }}">
+                        <span id="post-like-count-{{ post.id }}">{{ post.likes_count }}</span>
+                        {% if user.is_authenticated %}
+                            <i class="like-btn fa fa-heart" id="{{ post.id }}"></i>
+                        {% else %}
+                            <i class="fa fa-heart-o"></i>
+                        {% endif %}
                     </div>
                     <div class="col-md-6 text-right">
-                        <button type="button" class="btn btn-outline-secondary btn-md" id="edit-post">
+                        {% if user.is_authenticated and user.id == post.author_id %}
+                        <button type="button" class="btn btn-outline-secondary btn-md edit-btn" id="edit-post-{{ post.id }}" value="{{ post.id }}">
                             <i class="fa fa-edit"></i>
                         </button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -63,7 +85,3 @@
 	</div>
 </div>
 
-{% block script %}
-    {{ request.user.id|json_script:"user_id" }}
-    <script src="{% static 'network/post.js' %}"></script>
-{% endblock %}

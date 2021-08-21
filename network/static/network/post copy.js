@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
     forms.forEach( form => {
         form.style.display = 'none'
     })
-    load_liking_functionality();
     load_editing_functionality();
+    // load_liking_functionality();
 })
 
 async function load_editing_functionality() {
@@ -54,59 +54,57 @@ async function load_editing_functionality() {
     });
 }
 
-
-
 async function load_liking_functionality() {
 
     like_buttons = await document.querySelectorAll(".like-btn");
 
-    like_buttons.forEach(async button => {
+    like_buttons.forEach(button => {
+        post_id = button.value
+
         let likes = await fetch('/likes', {
                                 method: 'POST',
                                 headers:{'X-CSRFToken': getCookie("csrftoken")},
                                 body: JSON.stringify({
-                                    post_id: button.id
+                                    post_id: post_id
                                 })
                             })
-        
-        likes = (await likes.json())["likes"]
+    
+        likes = (await is_following.json())["likes"]
 
         update_like_button(button, likes);
 
         button.addEventListener("click", async () => {
             likes = !likes;
-            await fetch(`/post/${button.id}`, {
+
+            await fetch(`/post/${post_id}`, {
                 method: 'PUT',
                 headers:{'X-CSRFToken': getCookie("csrftoken")},
                 body: JSON.stringify({
                     like: likes
                 })
             })
-
-            update_like_button(button,likes);
-            update_likes_count(button.id);
+            
+            update_like_button(likes);
+            update_likes_count(post_id);
         })
 
     })
 }
 
-
-
 function update_like_button(button, likes) {
     if (likes) {
-        button.classList = ["like-btn fa fa-heart"]
+        follow_button.classList = ["like-btn", "fa", "fa-heart"]
     } else {
-        button.classList = ["like-btn fa fa-heart-o"]
+        follow_button.classList= ["like-btn", "fa", "fa-heart-o"]
     }
 }
 
 async function update_likes_count(post_id) {
     post = await fetch(`/post/${post_id}`)
-    post = await post.json()
+    post = await profile.json()
         
     document.querySelector(`#post-like-count-${post_id}`).innerHTML = `${post["likes_count"]}`
 }
-
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;

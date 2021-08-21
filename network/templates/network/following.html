@@ -11,9 +11,9 @@
     </div>
 
     <div id="posts-view">
+        {% include "network/posts.html" with posts=posts %}
     </div>
 
-    <input type="hidden" value="{{ page_number }}" id="page-number">
 {% endblock %}
 
 {% block script %}
