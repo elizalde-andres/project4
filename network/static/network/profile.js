@@ -1,5 +1,3 @@
-//(Un)Follow update following and followerss number
-
 document.addEventListener('DOMContentLoaded', function () {
     profile_id = profile_id.text;
     user_id = user_id.text;

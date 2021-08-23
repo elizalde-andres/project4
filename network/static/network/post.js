@@ -1,5 +1,3 @@
-// like unlike edit post
-
 document.addEventListener('DOMContentLoaded', function () {
     forms = document.querySelectorAll("#edit-form");
     forms.forEach( form => {
