@@ -50,10 +50,16 @@ async function load_following_functionality(follow_button) {
 function update_follow_button(is_following) {
     if (is_following) {
         follow_button.innerHTML = "Unfollow"
+        follow_button.classList.remove("btn-follow")
         follow_button.classList.add("btn-unfollow")
+        follow_button.classList.remove("btn-info")
+        follow_button.classList.add("btn-outline-info")
     } else {
         follow_button.innerHTML = "Follow"
+        follow_button.classList.remove("btn-unfollow")
         follow_button.classList.add("btn-follow")
+        follow_button.classList.remove("btn-outline-info")
+        follow_button.classList.add("btn-info")
     }
 }
 

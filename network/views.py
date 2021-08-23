@@ -195,7 +195,6 @@ def new_post(request):
                 post.save()
                 return HttpResponseRedirect(reverse("index"))
             except:
-                # TODO: si hay error al guardar el post, volver a rellenar el formulario con el contenido, tal vez en vez de return render, haya que volver al js para llenar el textarea
                 return render(request, "network/index.html", {
                     "message" : "Error saving the post.",
                     "content" : request.POST["content"] 
@@ -204,8 +203,6 @@ def new_post(request):
             return render(request, "network/login.html")
     else:
         return render(request, "network/index.html")
-
-#TODO:handle errors ver qué devuelven posts() profile()
 
 def display_posts(request, set):
     posts_set = posts(request, set)
