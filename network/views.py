@@ -11,20 +11,12 @@ from django.urls import reverse
 
 from .models import Post, User
 
-
-# def index(request):
-#     page = request.GET.get('page')
-
-#     return render(request, "network/index.html", {
-#         "page_number": page
-#     })
-
 def index(request):
 
     posts = Post.objects.all().order_by("-timestamp")
     posts = [post.serialize() for post in posts]
 
-    paginator = Paginator(posts,2)
+    paginator = Paginator(posts,10)
     page_number = request.GET.get('page')
 
     page_posts = paginator.get_page(page_number)
@@ -40,7 +32,7 @@ def following(request):
     posts = Post.objects.filter(author__in=following).order_by("-timestamp")
     posts = [post.serialize() for post in posts]
 
-    paginator = Paginator(posts,2)
+    paginator = Paginator(posts,10)
     page_number = request.GET.get('page')
 
     page_posts = paginator.get_page(page_number)
@@ -208,7 +200,7 @@ def display_posts(request, set):
     posts_set = posts(request, set)
     posts_set = json.loads(posts_set.content)
 
-    paginator = Paginator(posts_set,2)
+    paginator = Paginator(posts_set,10)
     page_number = request.GET.get('page')
 
     page_posts = paginator.get_page(page_number)
@@ -222,10 +214,10 @@ def user(request, profile_id):
     profile_info = profile(request, profile_id)
     profile_info = json.loads(profile_info.content)
 
-    posts = User.objects.get(pk=profile_id).posts.all()
+    posts = User.objects.get(pk=profile_id).posts.all().order_by("-timestamp")
     posts = [post.serialize() for post in posts]
 
-    paginator = Paginator(posts,2)
+    paginator = Paginator(posts,10)
     page_number = request.GET.get('page')
 
     page_posts = paginator.get_page(page_number)

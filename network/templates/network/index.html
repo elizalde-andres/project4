@@ -44,5 +44,4 @@
 
 {% block script %}
     {{ request.user.id|json_script:"user_id" }}
-    <script src="{% static 'network/network.js' %}"></script>
 {% endblock %}

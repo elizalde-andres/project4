@@ -11,42 +11,42 @@ async function load_editing_functionality() {
     edit_buttons = await document.querySelectorAll(".edit-btn");
     
     edit_buttons.forEach(button => {
-        post_id = button.value;
 
-        post_form = document.querySelector(`#edit-form-${post_id}`)
-        post_content = document.querySelector(`#post-content-${post_id}`);
-
-        post_form.style.display = 'none';
-        post_content.style.display = 'block';
+            document.querySelector(`#edit-form-${button.value}`).style.display = 'none';
+            document.querySelector(`#post-content-${button.value}`).style.display = 'block';
 
         button.addEventListener("click", () => {
+
+            post_form = document.querySelector(`#edit-form-${button.value}`)
+            post_content = document.querySelector(`#post-content-${button.value}`);
+
             post_form.style.display = 'block';
             post_content.style.display = 'none';
             button.style.display = 'none'
 
 
-            document.querySelector(`#content-${post_id}`).innerHTML = post_content.innerText.trim();
+            document.querySelector(`#content-${button.value}`).innerHTML = post_content.innerText.trim();
 
-            save_btn = document.querySelector(`#save-${post_id}`);
+            save_btn = document.querySelector(`#save-${button.value}`);
             save_btn.addEventListener("click", async () => {
-                content = await document.querySelector(`#content-${post_id}`).value;
+                content = await document.querySelector(`#content-${button.value}`).value;
 
-                await fetch(`/post/${post_id}`, {
+                await fetch(`/post/${button.value}`, {
                     method: 'PUT',
                     headers:{'X-CSRFToken': getCookie("csrftoken")},
                     body: JSON.stringify({
                         content: content
                     })
                 })
-
-                post = await fetch(`/post/${post_id}`)
+                
+                post = await fetch(`/post/${button.value}`)
                 post = await post.json()
-
+                
                 post_content.innerText = post.content;
                 post_form.style.display = 'none';
                 post_content.style.display = 'block';
                 button.style.display = 'inline';
-
+                
             })
         })
     });
